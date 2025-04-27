@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+    <meta charset = "utf-8">
+    <title>task__12</title>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous">
+    </script>
+    <style>
+      .container {
+        margin: auto;
+        width: 600px;
+        height: 500px;
+        border: 1px solid;
+      }
+
+      .show {
+        position: relative;
+        width: 100%;
+        height: 350px;
+      }
+
+      .show > div {
+        position: absolute;
+        margin-left: 150px;
+        margin-top: 20px;
+        width: 300px;
+        height: 300px;
+      }
+
+      .menuSlider {
+        margin: 0px;
+        /* margin-top: 350px; */
+        width: 100%;
+        height: 150px;
+        border: 1px solid;
+      }
+
+      .points {
+        margin: auto;
+        width: 50%;
+        height: 50px;
+      }
+
+      .pointN {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-left: 20px;
+        /* background-color: #89c; */
+        border-radius: 5px;
+        border: 1px solid aqua;
+      }
+
+      .buttons {
+        margin: auto;
+        width: 50%;
+        height: 50px;
+      }
+
+      .btnsSlider {
+        width: 50px;
+        height: 50px;
+        margin-left: 5px;
+      }
+
+      #btnPlay {
+        display: inline-block;
+        background-image: url(img/play.png);
+        background-size: 100%;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class = "container">
+      <div class = "show">
+        <div></div>
+      </div>
+      <div class = "menuSlider">
+        <div class = "points">
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+          <p class = "pointN"></p>
+        </div>
+        <div class = "buttons">
+          <img class = "btnsSlider" src = "img/start.jpeg">
+          <img class = "btnsSlider" src = "img/forward.png">
+          <!-- switch button play/stop -->
+          <div id = "btnPlay" class = "btnsSlider"></div>
+
+          <img class = "btnsSlider" src = "img/next.png">
+          <img class = "btnsSlider" src = "img/end.png">
+        </div>
+      </div>
+    </div>
+    <script>
+      //storage of picture;
+      let arrayImages = ["img/cat_1.jpg", "img/cat_2.jpg", "img/cat_3.jpeg",
+                        "img/cat_4.jpeg", "img/cat_5.jpg", "img/cat_6.jpg",
+                        "img/cat_7.jpg", "img/cat_8.jpg"];
+
+      $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
+      $(".show > div").css("background-size", "100%");
+      $(".pointN:first").css("background-color", "aqua");
+
+
+      //event - tuggling points on slider;
+      $(".pointN").click(function(e){
+        $(".pointN").css("background-color", "white");
+        $(this).css("background-color", "aqua");
+
+        let pointIndex = $(".pointN").index(this);
+        // console.log(pointIndex);
+        $(".show > div").css("background-image", "url(" + arrayImages[pointIndex] + ")");
+
+      });
+
+      let btnsForClick = []; //array of children elem for method find().
+      for(let j = 0; j < arrayImages.length; j++)
+      {
+        let buttonIndex = $(".buttons").children()[j];
+        btnsForClick.push(buttonIndex);
+      }
+      //event - buttons in menu;
+      //1)start-button
+
+      $(".buttons").find(btnsForClick[0]).click(function(e){
+        $(".pointN").css("background-color", "white");
+        $(".pointN:first").css("background-color", "aqua");
+        $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
+      });
+
+      //2)forward-button
+      $(".buttons").find(btnsForClick[1]).click(function(e){
+        let findedChild = 0;
+        let aquaPointIndex = 0;
+        // findedChild = $(".points").children()[3];
+        // console.log($(".points").find(findedChild).css('background-color')); //return in rgb format!
+        for(let i = 0; i < arrayImages.length; i++)
+        {
+          findedChild = $(".points").children()[i];
+          if($(".points").find(findedChild).css('background-color') == "rgb(0, 255, 255)")
+          {
+            // console.log("aqua point has " + i + " index");
+            //for case when we have first aqua point!
+            if(i == 0)
+            {
+              aquaPointIndex = 1;
+              break;
+            }
+            else
+            {
+              aquaPointIndex = i;
+              break;
+            }
+          }
+        }
+        $(".pointN").css("background-color", "white");
+        //find previous index of point and adding aqua;
+        findedChild = $(".points").children()[aquaPointIndex - 1];
+        $(".points").find(findedChild).css("background-color", "aqua");
+        $(".show > div").css("background-image", "url(" + arrayImages[aquaPointIndex - 1] + ")");
+      });
+
+      //event - play. begin slide show;
+      let flag = false;
+      let beginShow = 0;
+
+      $(".buttons").find(btnsForClick[2]).click(function(e){
+        if(flag)
+        {
+          $(this).css("background-image", "url(img/play.png)");
+          flag = false;
+        }
+        else
+        {
+          flag = true;
+          $(this).css("background-image", "url(img/stop.png)");
+        }
+
+        let indexAqua = 0;
+        // $(".pointN:first").css("background-color", "aqua");
+        let tmpCounter = 0;
+        if(flag)
+        {
+          beginShow = setInterval(function(){  //setInterval - reiterating executing function;
+            if(tmpCounter > arrayImages.length - 1)
+            {
+              // clearInterval(beginShow); //delete interval of repeating executing function;
+
+              tmpCounter = 0; //endless show!
+              $(".pointN").css("background-color", "white");
+              indexAqua = $(".points").children()[tmpCounter];
+              $(".points").find(indexAqua).css("background-color", "aqua");
+              $(".show > div").css("background-image", "url(" + arrayImages[tmpCounter] + ")");
+              $(".show > div").css("transition-duration", "1s");
+              tmpCounter++;
+            }
+            else
+            {
+              // console.log(tmpCounter);
+              $(".pointN").css("background-color", "white");
+              indexAqua = $(".points").children()[tmpCounter];
+              $(".points").find(indexAqua).css("background-color", "aqua");
+              $(".show > div").css("background-image", "url(" + arrayImages[tmpCounter] + ")");
+              $(".show > div").css("transition-duration", "1s");
+              tmpCounter++;
+            }
+          }, 1500); //set interval - 1.5s;
+        }
+        else
+        {
+          clearInterval(beginShow);
+          $(".pointN").css("background-color", "white");
+          $(".pointN:first").css("background-color", "aqua");
+          $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
+          cnt = 2;
+        }
+
+      });
+
+      //event - next-button;
+      $(".buttons").find(btnsForClick[3]).click(function(e){
+        let findedChild = 0;
+        let aquaPointIndex = 0;
+        // findedChild = $(".points").children()[3];
+        // console.log($(".points").find(findedChild).css('background-color')); //return in rgb format!
+        for(let i = 0; i < arrayImages.length; i++)
+        {
+          findedChild = $(".points").children()[i];
+          if($(".points").find(findedChild).css('background-color') == "rgb(0, 255, 255)")
+          {
+            if(i == arrayImages.length - 1)
+            {
+              aquaPointIndex = i - 1;
+              break;
+            }
+            else
+            {
+              aquaPointIndex = i;
+              break;
+            }
+          }
+        }
+        $(".pointN").css("background-color", "white");
+        //find previous index of point and adding aqua;
+        findedChild = $(".points").children()[aquaPointIndex + 1];
+        $(".points").find(findedChild).css("background-color", "aqua");
+        $(".show > div").css("background-image", "url(" + arrayImages[aquaPointIndex + 1] + ")");
+      });
+
+      //event - end-button;
+      $(".buttons").find(btnsForClick[4]).click(function(e){
+        $(".pointN").css("background-color", "white");
+        $(".pointN:last").css("background-color", "aqua");
+        $(".show > div").css("background-image", "url(" + arrayImages[arrayImages.length - 1] + ")");
+      });
+    </script>
+  </body>
+</html>
