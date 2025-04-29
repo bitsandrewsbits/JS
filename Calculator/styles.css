@@ -1,0 +1,32 @@
+.Calculator {
+  margin: auto;
+  border: 1px solid;
+  width: 350px;
+  height: 480px;
+}
+
+.area_Results {
+  margin: auto;
+  padding-top: 15px;
+  width: 90%;
+  height: 10%;
+  border: 2px solid grey;
+  text-align: right;
+  font-size: 20px;
+  font-family: sans-serif;
+}
+
+.area_Operations {
+  text-align: center;
+  margin: auto;
+  width: 90%;
+  height: 85%;
+  border: 1px solid;
+  border-spacing: 0px;
+}
+
+td {
+  width: 20.5%;
+  height: 50px;
+  border: 1px solid;
+}
