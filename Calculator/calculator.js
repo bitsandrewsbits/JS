@@ -1,10 +1,11 @@
 let selectorOperations = document.querySelector(".area_Operations");
 let objResults = document.querySelector(".area_Results");
 
-let math_operators = ['+', '-', '/', '*']
+let math_operators = ['-', '+', '*', '/'];
+let first_priority_math_operators = ['/', '*'];
+let secound_priority_math_operators = ['+', '-'];
 let arithm_expression_elems = [];
 let input_operators = [];
-let arithm_operands_group_by_operators = {};
 let numberN = 0; //start number;
 let tmpNum = []; //array for digits in number;
 
@@ -14,10 +15,78 @@ let special_options = {};
 selectorOperations.addEventListener('click', function(e){
   let elem = e.target.textContent; //get digit or operators(spec buttons);
 
-  function calculating(input_elems, operators_order){
-    // TODO: change entire func
-    GroupOperandsByOperators()
-   
+  function calculating(expression_elems){
+    console.log('Start Calculating...');
+    let result = 0;
+    let temp_result = 0;
+    let i = 0;
+    let max_iterations = 20
+    let iter_cnt = 0
+    while (expression_elems.length != 1){
+      // if (iter_cnt > max_iterations){
+      //   break;
+      // }
+      // iter_cnt++;
+      console.log(expression_elems)
+      operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i])
+      if (first_priority_math_operators.includes(input_operators[i])){
+        if (input_operators[i] == '*'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] * expression_elems[operator_index_in_input_elems + 1] 
+        }
+        if (input_operators[i] == '/'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] / expression_elems[operator_index_in_input_elems + 1] 
+        }
+        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i)
+        RemoveCalculatedOperator(input_operators[i])
+      }
+      if (FirstPriorityOperatorExists()){
+        i++;
+        continue;
+      }
+      if (secound_priority_math_operators.includes(input_operators[i])){
+        if (input_operators[i] == '-'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] - expression_elems[operator_index_in_input_elems + 1] 
+        }
+        if (input_operators[i] == '+'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] + expression_elems[operator_index_in_input_elems + 1] 
+        }
+        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i)
+        RemoveCalculatedOperator(input_operators[i])
+      }
+      if (i < input_operators.length){
+        i++;
+      }
+      else {
+        i = 0;
+      }
+    }
+    console.log('Final result = ' + temp_result);
+    result = temp_result;
+    return result;
+  }
+
+  function FirstPriorityOperatorExists(){
+    if (input_operators.includes('*') || input_operators.includes('/')){
+      return true;
+    }
+    return false;
+  }
+
+  function GetExpresElemsOperatorIndex(operator){
+    operator_index_in_expres_elems = arithm_expression_elems.indexOf(
+      operator
+    )
+    return operator_index_in_expres_elems
+  }
+
+  function ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, operator_index){
+    operator_index_in_expres_elems = GetExpresElemsOperatorIndex(input_operators[operator_index])
+    expression_elems.splice(operator_index_in_expres_elems - 1, 3, temp_result)
+  }
+
+  function RemoveCalculatedOperator(operator){
+    calculated_operator_index = input_operators.indexOf(operator)
+    input_operators.splice(calculated_operator_index, 1)
   }
 
   function createNumber(arrDigits){
@@ -35,6 +104,10 @@ selectorOperations.addEventListener('click', function(e){
 
   function DeleteAllWindowSymbols(){
     objResults.innerHTML = "";
+    let arithm_expression_elems = [];
+    let input_operators = [];
+    let numberN = 0;
+    let tmpNum = [];
   }
 
   function DeleteOneWindowSymbol(){
@@ -59,47 +132,11 @@ selectorOperations.addEventListener('click', function(e){
     input_operators.push(elem);
   }
 
-  function GetOperatorsOrderOfCalculation(){
-    let input_operators_copy = input_operators;
-    operators_calculation_order = [];
-    for (let i = 0; i < input_operators_copy.length; i++){
-      if (input_operators[i] == "*" || input_operators[i] == "/"){
-        operators_calculation_order.push(
-          input_operators[i]
-        );
-        input_operators.splice(i, input_operators[i]);
-      }
-    }
-    console.log('Remain input operators:' + input_operators)
-    operators_calculation_order.concat(input_operators);
-    console.log('Operators order:' + operators_calculation_order)
-    return operators_calculation_order;
-  }
-
-  function GroupOperandsByOperators(){
-    for (let i = 0; i < input_operators.length - 1; i++){
-      operator_index_in_expres_elems = arithm_expression_elems.indexOf(
-        input_operators[i]
-      )
-      left_operand = arithm_expression_elems[operator_index_in_expres_elems - 1]
-      right_operand = arithm_expression_elems[operator_index_in_expres_elems + 1]
-      arithm_expression_elems.splice(operator_index_in_expres_elems - 1, left_operand)
-      arithm_expression_elems.splice(operator_index_in_expres_elems + 1, right_operand)
-      
-      arithm_operands_group_by_operators[input_operators[i]] = [
-        left_operand, right_operand
-      ]
-    }
-    console.log('Group By Operators:')
-    console.log(arithm_operands_group_by_operators)
-  }
-
   function ShowResultInWindow(){
-    operators_calc_order = GetOperatorsOrderOfCalculation()
     objResults.innerHTML = objResults.innerHTML + elem;
     numberN = createNumber(tmpNum);
     arithm_expression_elems.push(numberN);
-    objResults.innerHTML = calculating(arithm_expression_elems, operators_calc_order);
+    objResults.innerHTML = calculating(arithm_expression_elems);
   }
 
   function CheckSymbolIsOperator(symbol){
@@ -127,7 +164,6 @@ selectorOperations.addEventListener('click', function(e){
     special_options[elem]();
   }
   if (digit_regex.test(elem)){
-    // console.log('Only digit:' + elem)
     tmpNum.push(parseInt(elem));
     objResults.innerHTML = objResults.innerHTML + elem;
   }
