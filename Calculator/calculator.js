@@ -17,46 +17,55 @@ selectorOperations.addEventListener('click', function(e){
 
   function calculating(expression_elems){
     console.log('Start Calculating...');
+    console.log('Input elements: ' + expression_elems);
     let result = 0;
     let temp_result = 0;
     let i = 0;
-    let max_iterations = 20
-    let iter_cnt = 0
+    let iter_cnt = 0;
+    let max_iters = expression_elems.length;
     while (expression_elems.length != 1){
-      // if (iter_cnt > max_iterations){
+      console.log("Current operators: " + input_operators);
+      // if (iter_cnt >= max_iters){
       //   break;
       // }
       // iter_cnt++;
-      console.log(expression_elems)
-      operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i])
+      console.log(expression_elems);
       if (first_priority_math_operators.includes(input_operators[i])){
+        operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
         if (input_operators[i] == '*'){
-          temp_result = expression_elems[operator_index_in_input_elems - 1] * expression_elems[operator_index_in_input_elems + 1] 
+          temp_result = expression_elems[operator_index_in_input_elems - 1] * expression_elems[operator_index_in_input_elems + 1];
         }
         if (input_operators[i] == '/'){
-          temp_result = expression_elems[operator_index_in_input_elems - 1] / expression_elems[operator_index_in_input_elems + 1] 
+          temp_result = expression_elems[operator_index_in_input_elems - 1] / expression_elems[operator_index_in_input_elems + 1];
         }
-        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i)
-        RemoveCalculatedOperator(input_operators[i])
+        if (expression_elems[operator_index_in_input_elems - 2] == '-'){
+          temp_result = temp_result * (-1);
+          expression_elems.splice(operator_index_in_input_elems - 2, 1, '+');
+          input_operators.splice(i - 1, 1, '+');
+        }
+        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i);
+        RemoveCalculatedOperator(i);
+        i--;
       }
       if (FirstPriorityOperatorExists()){
         i++;
         continue;
       }
-      if (secound_priority_math_operators.includes(input_operators[i])){
-        if (input_operators[i] == '-'){
-          temp_result = expression_elems[operator_index_in_input_elems - 1] - expression_elems[operator_index_in_input_elems + 1] 
-        }
-        if (input_operators[i] == '+'){
-          temp_result = expression_elems[operator_index_in_input_elems - 1] + expression_elems[operator_index_in_input_elems + 1] 
-        }
-        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i)
-        RemoveCalculatedOperator(input_operators[i])
-      }
-      if (i < input_operators.length){
-        i++;
-      }
       else {
+        if (secound_priority_math_operators.includes(input_operators[i])){
+          operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
+          if (input_operators[i] == '-'){
+            temp_result = expression_elems[operator_index_in_input_elems - 1] - expression_elems[operator_index_in_input_elems + 1];
+          }
+          if (input_operators[i] == '+'){
+            temp_result = expression_elems[operator_index_in_input_elems - 1] + expression_elems[operator_index_in_input_elems + 1];
+          }
+          ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i);
+          RemoveCalculatedOperator(i);
+          i++;
+        }
+      }
+      if (i >= input_operators.length){
         i = 0;
       }
     }
@@ -76,17 +85,17 @@ selectorOperations.addEventListener('click', function(e){
     operator_index_in_expres_elems = arithm_expression_elems.indexOf(
       operator
     )
-    return operator_index_in_expres_elems
+    return operator_index_in_expres_elems;
   }
 
   function ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, operator_index){
-    operator_index_in_expres_elems = GetExpresElemsOperatorIndex(input_operators[operator_index])
-    expression_elems.splice(operator_index_in_expres_elems - 1, 3, temp_result)
+    operator_index_in_expres_elems = GetExpresElemsOperatorIndex(input_operators[operator_index]);
+    expression_elems.splice(operator_index_in_expres_elems - 1, 3, temp_result);
   }
 
-  function RemoveCalculatedOperator(operator){
-    calculated_operator_index = input_operators.indexOf(operator)
-    input_operators.splice(calculated_operator_index, 1)
+  function RemoveCalculatedOperator(operator_index){
+    // calculated_operator_index = input_operators.indexOf(operator);
+    input_operators.splice(operator_index, 1);
   }
 
   function createNumber(arrDigits){
@@ -113,6 +122,7 @@ selectorOperations.addEventListener('click', function(e){
   function DeleteOneWindowSymbol(){
     if (objResults.innerHTML.length > 0){
       objResults.innerHTML = objResults.innerHTML.slice(0, -1);
+      arithm_expression_elems.splice(-1, 1);
     }
   }
 
@@ -151,8 +161,6 @@ selectorOperations.addEventListener('click', function(e){
       return true;
     }
     else {
-      console.log(arithm_expression_elems)
-      console.log('Last input element: ' + arithm_expression_elems.slice(-1))
       if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1))){
         return false;
       }
@@ -168,7 +176,9 @@ selectorOperations.addEventListener('click', function(e){
     objResults.innerHTML = objResults.innerHTML + elem;
   }
   if (elem == '='){
-    ShowResultInWindow();
+    if (arithm_expression_elems.length != 0){
+      ShowResultInWindow();
+    }
   }
   if (CheckSymbolIsOperator(elem)){
     AddInputNumberToArithmElementsArr();
