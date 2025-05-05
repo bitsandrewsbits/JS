@@ -113,10 +113,10 @@ selectorOperations.addEventListener('click', function(e){
 
   function DeleteAllWindowSymbols(){
     objResults.innerHTML = "";
-    let arithm_expression_elems = [];
-    let input_operators = [];
-    let numberN = 0;
-    let tmpNum = [];
+    arithm_expression_elems = [];
+    input_operators = [];
+    numberN = 0;
+    tmpNum = [];
   }
 
   function DeleteOneWindowSymbol(){
@@ -130,11 +130,11 @@ selectorOperations.addEventListener('click', function(e){
   special_options["Del One"] = DeleteOneWindowSymbol;
 
   function AddInputNumberToArithmElementsArr(){
-    objResults.innerHTML = objResults.innerHTML + ' ' + elem + ' ';
-    numberN = createNumber(tmpNum);
-    // console.log(numberN);
-    arithm_expression_elems.push(numberN);
-    tmpNum = [];
+    if (tmpNum.length != 0){
+      numberN = createNumber(tmpNum);
+      arithm_expression_elems.push(numberN);
+      tmpNum = [];
+    } 
   }
 
   function AddOperatorToElemOperatorArrs(){
@@ -144,8 +144,6 @@ selectorOperations.addEventListener('click', function(e){
 
   function ShowResultInWindow(){
     objResults.innerHTML = objResults.innerHTML + elem;
-    numberN = createNumber(tmpNum);
-    arithm_expression_elems.push(numberN);
     objResults.innerHTML = calculating(arithm_expression_elems);
   }
 
@@ -158,10 +156,10 @@ selectorOperations.addEventListener('click', function(e){
 
   function CheckPreviousSymbolIsNotOperator(){
     if (arithm_expression_elems.length == 0){
-      return true;
+      return false;
     }
     else {
-      if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1))){
+      if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1)[0])){
         return false;
       }
       return true;
@@ -171,18 +169,20 @@ selectorOperations.addEventListener('click', function(e){
   if (elem == "Del All" || elem == "Del One"){
     special_options[elem]();
   }
-  if (digit_regex.test(elem)){
+  else if (digit_regex.test(elem)){
     tmpNum.push(parseInt(elem));
     objResults.innerHTML = objResults.innerHTML + elem;
   }
-  if (elem == '='){
-    if (arithm_expression_elems.length != 0){
+  else if (elem == '='){
+    AddInputNumberToArithmElementsArr();
+    if (CheckPreviousSymbolIsNotOperator()){
       ShowResultInWindow();
     }
   }
-  if (CheckSymbolIsOperator(elem)){
+  else if (CheckSymbolIsOperator(elem)){
     AddInputNumberToArithmElementsArr();
     if (CheckPreviousSymbolIsNotOperator()){
+      objResults.innerHTML = objResults.innerHTML + ' ' + elem + ' ';
       AddOperatorToElemOperatorArrs();
     }
   }
