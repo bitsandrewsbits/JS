@@ -119,15 +119,27 @@ selectorOperations.addEventListener('click', function(e){
     tmpNum = [];
   }
 
-  function DeleteOneWindowSymbol(){
+  function DeleteOneWindowElement(){
     if (objResults.innerHTML.length > 0){
-      objResults.innerHTML = objResults.innerHTML.slice(0, -1);
+      if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1)[0])){
+        input_operators.splice(-1, 1);
+      }
+      console.log('Deleting: ' + arithm_expression_elems.slice(-1)[0])
       arithm_expression_elems.splice(-1, 1);
+      objResults.innerHTML = get_updated_innerHTML();
     }
   }
 
+  function get_updated_innerHTML(){
+    updated_innerHTML = "";
+    for (let i = 0; i < arithm_expression_elems.length; i++){
+      updated_innerHTML += arithm_expression_elems.slice(i)[0];
+    }
+    return updated_innerHTML;
+  }
+
   special_options["Del All"] = DeleteAllWindowSymbols;
-  special_options["Del One"] = DeleteOneWindowSymbol;
+  special_options["Del One"] = DeleteOneWindowElement;
 
   function AddInputNumberToArithmElementsArr(){
     if (tmpNum.length != 0){
