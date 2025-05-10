@@ -4,6 +4,7 @@ let objResults = document.querySelector(".area_Results");
 let math_operators = ['-', '+', '*', '/'];
 let first_priority_math_operators = ['/', '*'];
 let secound_priority_math_operators = ['+', '-'];
+let input_symbols = [];
 let arithm_expression_elems = [];
 let input_operators = [];
 let numberN = 0; //start number;
@@ -25,10 +26,10 @@ selectorOperations.addEventListener('click', function(e){
     let max_iters = expression_elems.length;
     while (expression_elems.length != 1){
       console.log("Current operators: " + input_operators);
-      // if (iter_cnt >= max_iters){
-      //   break;
-      // }
-      // iter_cnt++;
+      if (iter_cnt >= max_iters){
+        break;
+      }
+      iter_cnt++;
       console.log(expression_elems);
       if (first_priority_math_operators.includes(input_operators[i])){
         operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
@@ -117,6 +118,7 @@ selectorOperations.addEventListener('click', function(e){
     input_operators = [];
     numberN = 0;
     tmpNum = [];
+    input_symbols = [];
   }
 
   function DeleteOneWindowElement(){
@@ -141,6 +143,24 @@ selectorOperations.addEventListener('click', function(e){
   special_options["Del All"] = DeleteAllWindowSymbols;
   special_options["Del One"] = DeleteOneWindowElement;
 
+  function GetArithmExpresElementsFromInputSymbols(){
+    input_symbols.push(1);  // as for checking last input symbol.
+    for (let i = 0; i < input_symbols.length - 1; i++){
+      console.log('checking symbol: ' + input_symbols[i]);
+      if (digit_regex.test(input_symbols[i]) && digit_regex.test(input_symbols[i + 1])){
+        tmpNum.push(parseInt(input_symbols[i]));
+      }
+      else if (digit_regex.test(input_symbols[i])) {
+        tmpNum.push(parseInt(input_symbols[i]));
+        AddInputNumberToArithmElementsArr();
+      }
+      else if (math_operators.includes(input_symbols[i])){
+        arithm_expression_elems.push(input_symbols[i]);
+      }
+    }
+    AddInputNumberToArithmElementsArr(); 
+  }
+
   function AddInputNumberToArithmElementsArr(){
     if (tmpNum.length != 0){
       numberN = createNumber(tmpNum);
@@ -150,7 +170,6 @@ selectorOperations.addEventListener('click', function(e){
   }
 
   function AddOperatorToElemOperatorArrs(){
-    arithm_expression_elems.push(elem);
     input_operators.push(elem);
   }
 
@@ -167,11 +186,11 @@ selectorOperations.addEventListener('click', function(e){
   }
 
   function CheckPreviousSymbolIsNotOperator(){
-    if (arithm_expression_elems.length == 0){
+    if (input_symbols.length == 0){
       return false;
     }
     else {
-      if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1)[0])){
+      if (CheckSymbolIsOperator(input_symbols.slice(-1)[0])){
         return false;
       }
       return true;
@@ -182,19 +201,20 @@ selectorOperations.addEventListener('click', function(e){
     special_options[elem]();
   }
   else if (digit_regex.test(elem)){
-    tmpNum.push(parseInt(elem));
+    input_symbols.push(elem);
     objResults.innerHTML = objResults.innerHTML + elem;
   }
   else if (elem == '='){
-    AddInputNumberToArithmElementsArr();
+    console.log('Input arithm expression elements: ' + arithm_expression_elems);
     if (CheckPreviousSymbolIsNotOperator()){
+      GetArithmExpresElementsFromInputSymbols();
       ShowResultInWindow();
     }
   }
   else if (CheckSymbolIsOperator(elem)){
-    AddInputNumberToArithmElementsArr();
     if (CheckPreviousSymbolIsNotOperator()){
       objResults.innerHTML = objResults.innerHTML + ' ' + elem + ' ';
+      input_symbols.push(elem);
       AddOperatorToElemOperatorArrs();
     }
   }
