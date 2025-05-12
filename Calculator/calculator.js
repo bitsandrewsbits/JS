@@ -123,19 +123,18 @@ selectorOperations.addEventListener('click', function(e){
 
   function DeleteOneWindowElement(){
     if (objResults.innerHTML.length > 0){
-      if (CheckSymbolIsOperator(arithm_expression_elems.slice(-1)[0])){
+      if (CheckSymbolIsOperator(input_symbols.slice(-1)[0])){
         input_operators.splice(-1, 1);
       }
-      console.log('Deleting: ' + arithm_expression_elems.slice(-1)[0])
-      arithm_expression_elems.splice(-1, 1);
-      objResults.innerHTML = get_updated_innerHTML();
+      input_symbols.splice(-1, 1);
+      objResults.innerHTML = GetUpdatedInnerHTML();
     }
   }
 
-  function get_updated_innerHTML(){
+  function GetUpdatedInnerHTML(){
     updated_innerHTML = "";
-    for (let i = 0; i < arithm_expression_elems.length; i++){
-      updated_innerHTML += arithm_expression_elems.slice(i)[0];
+    for (let i = 0; i < input_symbols.length; i++){
+      updated_innerHTML += input_symbols.slice(i)[0];
     }
     return updated_innerHTML;
   }
@@ -146,7 +145,6 @@ selectorOperations.addEventListener('click', function(e){
   function GetArithmExpresElementsFromInputSymbols(){
     input_symbols.push(1);  // as for checking last input symbol.
     for (let i = 0; i < input_symbols.length - 1; i++){
-      console.log('checking symbol: ' + input_symbols[i]);
       if (digit_regex.test(input_symbols[i]) && digit_regex.test(input_symbols[i + 1])){
         tmpNum.push(parseInt(input_symbols[i]));
       }
