@@ -22,14 +22,7 @@ selectorOperations.addEventListener('click', function(e){
     let result = 0;
     let temp_result = 0;
     let i = 0;
-    let iter_cnt = 0;
-    let max_iters = expression_elems.length;
     while (expression_elems.length != 1){
-      console.log("Current operators: " + input_operators);
-      if (iter_cnt >= max_iters){
-        break;
-      }
-      iter_cnt++;
       console.log(expression_elems);
       if (first_priority_math_operators.includes(input_operators[i])){
         operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
@@ -53,21 +46,19 @@ selectorOperations.addEventListener('click', function(e){
         continue;
       }
       else {
-        if (secound_priority_math_operators.includes(input_operators[i])){
-          operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
-          if (input_operators[i] == '-'){
-            temp_result = expression_elems[operator_index_in_input_elems - 1] - expression_elems[operator_index_in_input_elems + 1];
-          }
-          if (input_operators[i] == '+'){
-            temp_result = expression_elems[operator_index_in_input_elems - 1] + expression_elems[operator_index_in_input_elems + 1];
-          }
-          ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i);
-          RemoveCalculatedOperator(i);
-          i++;
-        }
-      }
-      if (i >= input_operators.length){
         i = 0;
+      }
+      if (secound_priority_math_operators.includes(input_operators[i])){
+        operator_index_in_input_elems = GetExpresElemsOperatorIndex(input_operators[i]);
+        if (input_operators[i] == '-'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] - expression_elems[operator_index_in_input_elems + 1];
+        }
+        if (input_operators[i] == '+'){
+          temp_result = expression_elems[operator_index_in_input_elems - 1] + expression_elems[operator_index_in_input_elems + 1];
+        }
+        ReplaceCalculatedElemsToTempResult(expression_elems, temp_result, i);
+        RemoveCalculatedOperator(i);
+        i++;
       }
     }
     console.log('Final result = ' + temp_result);
