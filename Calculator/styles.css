@@ -3,6 +3,7 @@
   border: 1px solid;
   width: 350px;
   height: 480px;
+  background-color: rgb(139, 213, 164);
 }
 
 .area_Results {
@@ -12,8 +13,10 @@
   height: 10%;
   border: 2px solid grey;
   text-align: right;
-  font-size: 20px;
+  font-size: 30px;
   font-family: sans-serif;
+  background-color: rgb(20, 20, 20);
+  color: rgb(250, 150, 58);
 }
 
 .area_Operations {
@@ -23,10 +26,22 @@
   height: 85%;
   border: 1px solid;
   border-spacing: 0px;
+  font-size: 20px;
+  font-family: sans-serif;
 }
 
 td {
   width: 20.5%;
   height: 50px;
   border: 1px solid;
+}
+
+td:hover {
+  background-color: grey;
+  color: white;
+}
+
+td:active {
+  background-color: black;
+  color: rgb(234, 129, 53);
 }
