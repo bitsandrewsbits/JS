@@ -19,8 +19,7 @@ $(".pointN").click(function(e){
 });
 
 let btnsForClick = []; //array of children elem for method find().
-for(let j = 0; j < arrayImages.length; j++)
-{
+for (let j = 0; j < arrayImages.length; j++){
   let buttonIndex = $(".buttons").children()[j];
   btnsForClick.push(buttonIndex);
 }
@@ -37,18 +36,14 @@ $(".buttons").find(btnsForClick[0]).click(function(e){
 $(".buttons").find(btnsForClick[1]).click(function(e){
   let foundChild = 0;
   let aquaPointIndex = 0;
-  for(let i = 0; i < arrayImages.length; i++)
-  {
+  for (let i = 0; i < arrayImages.length; i++){
     foundChild = $(".points").children()[i];
-    if($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)")
-    {
-      if(i == 0)
-      {
+    if ($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)"){
+      if (i == 0){
         aquaPointIndex = 1;
         break;
       }
-      else
-      {
+      else {
         aquaPointIndex = i;
         break;
       }
@@ -61,29 +56,24 @@ $(".buttons").find(btnsForClick[1]).click(function(e){
 });
 
 //event - play. begin slide show;
-let flag = false;
+let PlayButtonPressed = false;
 let beginShow = 0;
 
 $(".buttons").find(btnsForClick[2]).click(function(e){
-  if(flag)
-  {
+  if (PlayButtonPressed){
     $(this).css("background-image", "url(img/play.png)");
-    flag = false;
+    PlayButtonPressed = false;
   }
-  else
-  {
-    flag = true;
+  else {
+    PlayButtonPressed = true;
     $(this).css("background-image", "url(img/stop.png)");
   }
 
   let indexAqua = 0;
   let tmpCounter = 0;
-  if(flag)
-  {
+  if (PlayButtonPressed){
     beginShow = setInterval(function(){
-      if(tmpCounter > arrayImages.length - 1)
-      {
-        tmpCounter = 0; //endless show!
+      if (tmpCounter < arrayImages.length){
         $(".pointN").css("background-color", "white");
         indexAqua = $(".points").children()[tmpCounter];
         $(".points").find(indexAqua).css("background-color", "aqua");
@@ -91,24 +81,21 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
         $(".show > div").css("transition-duration", "1s");
         tmpCounter++;
       }
-      else
-      {
+      else {
+        clearInterval(beginShow);
         $(".pointN").css("background-color", "white");
-        indexAqua = $(".points").children()[tmpCounter];
-        $(".points").find(indexAqua).css("background-color", "aqua");
-        $(".show > div").css("background-image", "url(" + arrayImages[tmpCounter] + ")");
-        $(".show > div").css("transition-duration", "1s");
-        tmpCounter++;
+        $(".pointN:first").css("background-color", "aqua");
+        $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
+        $(".buttons").find(btnsForClick[2]).css("background-image", "url(img/play.png)");
+        PlayButtonPressed = false;
       }
     }, 1500); //set interval - 1.5s;
   }
-  else
-  {
+  else {
     clearInterval(beginShow);
     $(".pointN").css("background-color", "white");
     $(".pointN:first").css("background-color", "aqua");
     $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
-    cnt = 2;
   }
 });
 
@@ -116,18 +103,14 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
 $(".buttons").find(btnsForClick[3]).click(function(e){
   let foundChild = 0;
   let aquaPointIndex = 0;
-  for(let i = 0; i < arrayImages.length; i++)
-  {
+  for (let i = 0; i < arrayImages.length; i++){
     foundChild = $(".points").children()[i];
-    if($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)")
-    {
-      if(i == arrayImages.length - 1)
-      {
+    if ($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)"){
+      if (i == arrayImages.length - 1){
         aquaPointIndex = i - 1;
         break;
       }
-      else
-      {
+      else {
         aquaPointIndex = i;
         break;
       }
