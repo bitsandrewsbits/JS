@@ -6,56 +6,62 @@ let arrayImages = [
 
 $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
 $(".show > div").css("background-size", "100%");
-$(".pointN:first").css("background-color", "aqua");
-
-//event - tuggling points on slider;
-$(".pointN").click(function(e){
-  $(".pointN").css("background-color", "white");
-  $(this).css("background-color", "aqua");
-
-  let pointIndex = $(".pointN").index(this);
-  $(".show > div").css("background-image", "url(" + arrayImages[pointIndex] + ")");
-
-});
 
 let btnsForClick = []; //array of children elem for method find().
 for (let j = 0; j < arrayImages.length; j++){
   let buttonIndex = $(".buttons").children()[j];
   btnsForClick.push(buttonIndex);
 }
-//event - buttons in menu;
-//1)start-button
+let CurrentImageIndex = 0;
+let ImagesAmount = arrayImages.length;
+let ProgressBarPercentagePerImage = 100 / ImagesAmount;
+let ProgressBarPercentagesAmount = 0;
+let ImagesCounter = 0;
+let ProgressBarSelector = document.querySelector(".ProgressBar");
 
-$(".buttons").find(btnsForClick[0]).click(function(e){
-  $(".pointN").css("background-color", "white");
-  $(".pointN:first").css("background-color", "aqua");
-  $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
-});
-
-//2)forward-button
+//2)backward-button
 $(".buttons").find(btnsForClick[1]).click(function(e){
-  let foundChild = 0;
-  let aquaPointIndex = 0;
-  for (let i = 0; i < arrayImages.length; i++){
-    foundChild = $(".points").children()[i];
-    if ($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)"){
-      if (i == 0){
-        aquaPointIndex = 1;
-        break;
-      }
-      else {
-        aquaPointIndex = i;
-        break;
-      }
-    }
+  if (CurrentImageIndex > 0){
+    CurrentImageIndex--;
   }
-  $(".pointN").css("background-color", "white");
-  foundChild = $(".points").children()[aquaPointIndex - 1];
-  $(".points").find(foundChild).css("background-color", "aqua");
-  $(".show > div").css("background-image", "url(" + arrayImages[aquaPointIndex - 1] + ")");
+  else {
+    CurrentImageIndex = 0;
+  }
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+  if (ImagesCounter > 0){
+    ImagesCounter--;
+    ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
+  }
+  if (ImagesCounter == 0){
+    ProgressBarPercentagesAmount = 100;
+    ImagesCounter = ImagesAmount;
+  }
+  ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
+  ProgressBarSelector.style["background-color"] = "#b4be5a";
 });
 
-//event - play. begin slide show;
+//forward button;
+$(".buttons").find(btnsForClick[3]).click(function(e){
+  if (CurrentImageIndex < arrayImages.length){
+    CurrentImageIndex++;
+  }
+  if (CurrentImageIndex == arrayImages.length){
+    CurrentImageIndex = 0;
+  }
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+  if (ImagesCounter < ImagesAmount){
+    ImagesCounter++;
+    ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
+  }
+  if (ImagesCounter == ImagesAmount){
+    ProgressBarPercentagesAmount = 0;
+    ImagesCounter = 0;
+  }
+  ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
+  ProgressBarSelector.style["background-color"] = "#b4be5a";
+});
+
+//play button - begin slide show;
 let PlayButtonPressed = false;
 let beginShow = 0;
 
@@ -97,29 +103,6 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
     $(".pointN:first").css("background-color", "aqua");
     $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
   }
-});
-
-//event - next-button;
-$(".buttons").find(btnsForClick[3]).click(function(e){
-  let foundChild = 0;
-  let aquaPointIndex = 0;
-  for (let i = 0; i < arrayImages.length; i++){
-    foundChild = $(".points").children()[i];
-    if ($(".points").find(foundChild).css('background-color') == "rgb(0, 255, 255)"){
-      if (i == arrayImages.length - 1){
-        aquaPointIndex = i - 1;
-        break;
-      }
-      else {
-        aquaPointIndex = i;
-        break;
-      }
-    }
-  }
-  $(".pointN").css("background-color", "white");
-  foundChild = $(".points").children()[aquaPointIndex + 1];
-  $(".points").find(foundChild).css("background-color", "aqua");
-  $(".show > div").css("background-image", "url(" + arrayImages[aquaPointIndex + 1] + ")");
 });
 
 //event - end-button;
