@@ -4,8 +4,9 @@ let arrayImages = [
   "img/cat_7.jpg", "img/cat_8.jpg"
 ];
 
-$(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
-$(".show > div").css("background-size", "100%");
+function SetStartSliderImageBackground(){
+  $(".show > div").css("background-image", "none");
+}
 
 let btnsForClick = []; //array of children elem for method find().
 for (let j = 0; j < arrayImages.length; j++){
@@ -23,19 +24,15 @@ let ProgressBarSelector = document.querySelector(".ProgressBar");
 $(".buttons").find(btnsForClick[1]).click(function(e){
   if (CurrentImageIndex > 0){
     CurrentImageIndex--;
-  }
-  else {
-    CurrentImageIndex = 0;
-  }
-  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
-  if (ImagesCounter > 0){
     ImagesCounter--;
     ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
   }
-  if (ImagesCounter == 0){
-    ProgressBarPercentagesAmount = 100;
-    ImagesCounter = ImagesAmount;
+  else {
+    ProgressBarPercentagesAmount = 0;
+    ImagesCounter = 0;
+    CurrentImageIndex = 1;
   }
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
   ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
   ProgressBarSelector.style["background-color"] = "#b4be5a";
 });
@@ -43,20 +40,16 @@ $(".buttons").find(btnsForClick[1]).click(function(e){
 //forward button;
 $(".buttons").find(btnsForClick[3]).click(function(e){
   if (CurrentImageIndex < arrayImages.length){
-    CurrentImageIndex++;
-  }
-  if (CurrentImageIndex == arrayImages.length){
-    CurrentImageIndex = 0;
-  }
-  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
-  if (ImagesCounter < ImagesAmount){
     ImagesCounter++;
+    CurrentImageIndex++;
     ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
   }
-  if (ImagesCounter == ImagesAmount){
-    ProgressBarPercentagesAmount = 0;
-    ImagesCounter = 0;
+  else {
+    ProgressBarPercentagesAmount = 100;
+    ImagesCounter = ImagesAmount;
+    CurrentImageIndex = ImagesAmount - 1;
   }
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex - 1] + ")");
   ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
   ProgressBarSelector.style["background-color"] = "#b4be5a";
 });
@@ -99,15 +92,11 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
   }
   else {
     clearInterval(beginShow);
-    $(".pointN").css("background-color", "white");
-    $(".pointN:first").css("background-color", "aqua");
-    $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
+    SetStartSliderImageBackground();
   }
 });
 
 //event - end-button;
 $(".buttons").find(btnsForClick[4]).click(function(e){
-  $(".pointN").css("background-color", "white");
-  $(".pointN:last").css("background-color", "aqua");
   $(".show > div").css("background-image", "url(" + arrayImages[arrayImages.length - 1] + ")");
 });
