@@ -20,6 +20,11 @@ let ProgressBarPercentagesAmount = 0;
 let ImagesCounter = 0;
 let ProgressBarSelector = document.querySelector(".ProgressBar");
 
+function UpdateProgressBar(percentages){
+  ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
+  ProgressBarSelector.style["background-color"] = "rgb(180, 190, 90)";
+}
+
 //2)backward-button
 $(".buttons").find(btnsForClick[1]).click(function(e){
   if (CurrentImageIndex > 0){
@@ -27,14 +32,15 @@ $(".buttons").find(btnsForClick[1]).click(function(e){
     ImagesCounter--;
     ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
   }
-  else {
-    ProgressBarPercentagesAmount = 0;
-    ImagesCounter = 0;
-    CurrentImageIndex = 1;
+  if (CurrentImageIndex == 0 && $(".show > div").css("background-image") != "none"){
+    ProgressBarPercentagesAmount = ProgressBarPercentagePerImage;
+    ImagesCounter = 1;
+    CurrentImageIndex = 0;
   }
-  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
-  ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
-  ProgressBarSelector.style["background-color"] = "#b4be5a";
+  if ($(".show > div").css("background-image") != "none"){
+    $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+    UpdateProgressBar(ProgressBarPercentagesAmount);
+  }
 });
 
 //forward button;
@@ -44,14 +50,18 @@ $(".buttons").find(btnsForClick[3]).click(function(e){
     CurrentImageIndex++;
     ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
   }
-  else {
+  if (CurrentImageIndex == ImagesAmount) {
     ProgressBarPercentagesAmount = 100;
     ImagesCounter = ImagesAmount;
     CurrentImageIndex = ImagesAmount - 1;
   }
-  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex - 1] + ")");
-  ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
-  ProgressBarSelector.style["background-color"] = "#b4be5a";
+  if ($(".show > div").css("background-image") == "none"){
+    $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex - 1] + ")");
+  }
+  else {
+    $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+  }
+  UpdateProgressBar(ProgressBarPercentagesAmount);
 });
 
 //play button - begin slide show;
