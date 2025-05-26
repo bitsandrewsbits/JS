@@ -106,7 +106,20 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
   }
 });
 
-//event - end-button;
+//end-button;
 $(".buttons").find(btnsForClick[4]).click(function(e){
-  $(".show > div").css("background-image", "url(" + arrayImages[arrayImages.length - 1] + ")");
+  ProgressBarPercentagesAmount = 100;
+  ImagesCounter = ImagesAmount;
+  CurrentImageIndex = ImagesAmount - 1;
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+  UpdateProgressBar(ProgressBarPercentagesAmount);
+});
+
+//first-image-button;
+$(".buttons").find(btnsForClick[0]).click(function(e){
+  ProgressBarPercentagesAmount = ProgressBarPercentagePerImage;
+  ImagesCounter = 1;
+  CurrentImageIndex = 0;
+  $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+  UpdateProgressBar(ProgressBarPercentagesAmount);
 });
