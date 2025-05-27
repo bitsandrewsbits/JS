@@ -4,15 +4,22 @@ let arrayImages = [
   "img/cat_7.jpg", "img/cat_8.jpg"
 ];
 
-function SetStartSliderImageBackground(){
-  $(".show > div").css("background-image", "none");
+function GetSliderButtonsAmount(){
+  return $(".buttons").children().length;
 }
 
-let btnsForClick = []; //array of children elem for method find().
-for (let j = 0; j < arrayImages.length; j++){
-  let buttonIndex = $(".buttons").children()[j];
-  btnsForClick.push(buttonIndex);
+function GetButtonsSelectors(ButtonsAmount){
+  ButtonsSelectors = [];
+  ButtonsAmount = GetSliderButtonsAmount();
+  for (let i = 0; i < ButtonsAmount; i++){
+    let buttonSelector = $(".buttons").children()[i];
+    ButtonsSelectors.push(buttonSelector);
+  }
+  return ButtonsSelectors;
 }
+let SliderButtonsAmount = GetSliderButtonsAmount();
+let btnsForClick = GetButtonsSelectors(SliderButtonsAmount);
+
 let CurrentImageIndex = 0;
 let ImagesAmount = arrayImages.length;
 let ProgressBarPercentagePerImage = 100 / ImagesAmount;
@@ -23,6 +30,22 @@ let ProgressBarSelector = document.querySelector(".ProgressBar");
 function UpdateProgressBar(percentages){
   ProgressBarSelector.style.width = ProgressBarPercentagesAmount + '%';
   ProgressBarSelector.style["background-color"] = "rgb(180, 190, 90)";
+}
+
+function SetStartSliderImageBackground(){
+  $(".show > div").css("background-image", "none");
+}
+
+function SetStartSlideShowParameters(){
+  CurrentImageIndex = 0;
+  ImagesCounter = 0;
+  ProgressBarPercentagesAmount = 0;
+}
+
+function UpdateParametersToNextImage(){
+  ImagesCounter++;
+  CurrentImageIndex++;
+  ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
 }
 
 //2)backward-button
@@ -46,9 +69,7 @@ $(".buttons").find(btnsForClick[1]).click(function(e){
 //forward button;
 $(".buttons").find(btnsForClick[3]).click(function(e){
   if (CurrentImageIndex < arrayImages.length){
-    ImagesCounter++;
-    CurrentImageIndex++;
-    ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
+    UpdateParametersToNextImage();
   }
   if (CurrentImageIndex == ImagesAmount) {
     ProgressBarPercentagesAmount = 100;
@@ -89,6 +110,7 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
         $(".show > div").css("background-image", "url(" + arrayImages[tmpCounter] + ")");
         $(".show > div").css("transition-duration", "1s");
         tmpCounter++;
+        UpdateParametersToNextImage();
       }
       else {
         clearInterval(beginShow);
@@ -97,12 +119,17 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
         $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
         $(".buttons").find(btnsForClick[2]).css("background-image", "url(img/play.png)");
         PlayButtonPressed = false;
+        SetStartSliderImageBackground();
+        SetStartSlideShowParameters();
       }
+      UpdateProgressBar();
     }, 1500); //set interval - 1.5s;
   }
   else {
     clearInterval(beginShow);
     SetStartSliderImageBackground();
+    SetStartSlideShowParameters();
+    UpdateProgressBar();
   }
 });
 
