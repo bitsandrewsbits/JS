@@ -48,12 +48,16 @@ function UpdateParametersToNextImage(){
   ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
 }
 
+function UpdateParametersToPreviousImage(){
+  CurrentImageIndex--;
+  ImagesCounter--;
+  ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
+}
+
 //2)backward-button
 $(".buttons").find(btnsForClick[1]).click(function(e){
   if (CurrentImageIndex > 0){
-    CurrentImageIndex--;
-    ImagesCounter--;
-    ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
+    UpdateParametersToPreviousImage();
   }
   if (CurrentImageIndex == 0 && $(".show > div").css("background-image") != "none"){
     ProgressBarPercentagesAmount = ProgressBarPercentagePerImage;
@@ -99,23 +103,17 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
     $(this).css("background-image", "url(img/stop.png)");
   }
 
-  let indexAqua = 0;
-  let tmpCounter = 0;
   if (PlayButtonPressed){
     beginShow = setInterval(function(){
-      if (tmpCounter < arrayImages.length){
-        $(".pointN").css("background-color", "white");
-        indexAqua = $(".points").children()[tmpCounter];
-        $(".points").find(indexAqua).css("background-color", "aqua");
-        $(".show > div").css("background-image", "url(" + arrayImages[tmpCounter] + ")");
-        $(".show > div").css("transition-duration", "1s");
-        tmpCounter++;
-        UpdateParametersToNextImage();
+      if (CurrentImageIndex < ImagesAmount){
+        $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
+        $(".show > div").css("transition-duration", "0.5s");
+        if (ProgressBarPercentagesAmount != 100){
+          UpdateParametersToNextImage();
+        }
       }
       else {
         clearInterval(beginShow);
-        $(".pointN").css("background-color", "white");
-        $(".pointN:first").css("background-color", "aqua");
         $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
         $(".buttons").find(btnsForClick[2]).css("background-image", "url(img/play.png)");
         PlayButtonPressed = false;
