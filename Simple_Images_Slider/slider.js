@@ -3,22 +3,19 @@ let arrayImages = [
   "img/cat_4.jpeg", "img/cat_5.jpg", "img/cat_6.jpg",
   "img/cat_7.jpg", "img/cat_8.jpg"
 ];
+const img_file_re = new RegExp("img\/[a-zA-Z0-9]*");
 
-function GetSliderButtonsAmount(){
-  return $(".buttons").children().length;
+function GetPressedButtonImageFile(){
+  $(".buttons > img").click(
+    function(){
+      img_file_match_result = img_file_re.exec($(this)[0].src);
+      if (img_file_match_result){
+        // console.log('Pressed Button with Image File:' + img_file_match_result);
+        return img_file_match_result;
+      }
+    }
+  )
 }
-
-function GetButtonsSelectors(ButtonsAmount){
-  ButtonsSelectors = [];
-  ButtonsAmount = GetSliderButtonsAmount();
-  for (let i = 0; i < ButtonsAmount; i++){
-    let buttonSelector = $(".buttons").children()[i];
-    ButtonsSelectors.push(buttonSelector);
-  }
-  return ButtonsSelectors;
-}
-let SliderButtonsAmount = GetSliderButtonsAmount();
-let btnsForClick = GetButtonsSelectors(SliderButtonsAmount);
 
 let CurrentImageIndex = 0;
 let ImagesAmount = arrayImages.length;
@@ -54,8 +51,7 @@ function UpdateParametersToPreviousImage(){
   ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
 }
 
-//2)backward-button
-$(".buttons").find(btnsForClick[1]).click(function(e){
+function BackwardButtonPressed(){
   if (CurrentImageIndex > 0){
     UpdateParametersToPreviousImage();
   }
@@ -68,10 +64,9 @@ $(".buttons").find(btnsForClick[1]).click(function(e){
     $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
     UpdateProgressBar(ProgressBarPercentagesAmount);
   }
-});
+};
 
-//forward button;
-$(".buttons").find(btnsForClick[3]).click(function(e){
+function ForwardButtonPressed(){
   if (CurrentImageIndex < arrayImages.length){
     UpdateParametersToNextImage();
   }
@@ -87,20 +82,20 @@ $(".buttons").find(btnsForClick[3]).click(function(e){
     $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
   }
   UpdateProgressBar(ProgressBarPercentagesAmount);
-});
+};
 
-//play button - begin slide show;
 let PlayButtonPressed = false;
 let beginShow = 0;
 
-$(".buttons").find(btnsForClick[2]).click(function(e){
+function PlaySlideShowButtonPressed(buttonSelector){
+  console.log("Play button:" + buttonSelector[0].src);
   if (PlayButtonPressed){
-    $(this).css("background-image", "url(img/play.png)");
+    buttonSelector[0].src = "img/play.png";
     PlayButtonPressed = false;
   }
   else {
+    buttonSelector[0].src = "img/stop.png";
     PlayButtonPressed = true;
-    $(this).css("background-image", "url(img/stop.png)");
   }
 
   if (PlayButtonPressed){
@@ -115,7 +110,7 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
       else {
         clearInterval(beginShow);
         $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
-        $(".buttons").find(btnsForClick[2]).css("background-image", "url(img/play.png)");
+        buttonSelector[0].src = "img/play.png";
         PlayButtonPressed = false;
         SetStartSliderImageBackground();
         SetStartSlideShowParameters();
@@ -129,22 +124,59 @@ $(".buttons").find(btnsForClick[2]).click(function(e){
     SetStartSlideShowParameters();
     UpdateProgressBar();
   }
-});
+};
 
 //end-button;
-$(".buttons").find(btnsForClick[4]).click(function(e){
+// $(".buttons").find(btnsForClick[4]).click(
+function LastImageButtonPressed(){
   ProgressBarPercentagesAmount = 100;
   ImagesCounter = ImagesAmount;
   CurrentImageIndex = ImagesAmount - 1;
   $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
   UpdateProgressBar(ProgressBarPercentagesAmount);
-});
+};
 
 //first-image-button;
-$(".buttons").find(btnsForClick[0]).click(function(e){
+// $(".buttons").find(btnsForClick[0]).click(
+function FirstImageButtonPressed(){
   ProgressBarPercentagesAmount = ProgressBarPercentagePerImage;
   ImagesCounter = 1;
   CurrentImageIndex = 0;
   $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
   UpdateProgressBar(ProgressBarPercentagesAmount);
-});
+};
+
+function GetButtonsImagesFunctionsDict(buttonsImages, buttonsFunctions){
+  result_dict = {};
+  for (let i = 0; i < buttonsImages.length; i++){
+    result_dict[buttonsImages[i]] = buttonsFunctions[i];
+  }
+  return result_dict;
+}
+
+let ButtonsImages = ['img/start', "img/backward", "img/play", "img/next", "img/end"];
+let ButtonsFunctions = [
+  FirstImageButtonPressed, BackwardButtonPressed, PlaySlideShowButtonPressed,
+  ForwardButtonPressed, LastImageButtonPressed
+];
+
+function PressedButtonEvent(){
+  img_file_match_result = img_file_re.exec($(this)[0].src);
+  if (img_file_match_result){
+    if (img_file_match_result == 'img/play' || img_file_match_result == 'img/stop'){
+      ButtonsImagesFunctionsDict[img_file_match_result]($(this));
+    }
+    else {
+      ButtonsImagesFunctionsDict[img_file_match_result]();
+    }
+  }
+}
+
+function main(){
+  ButtonsImagesFunctionsDict = GetButtonsImagesFunctionsDict(ButtonsImages, ButtonsFunctions);
+  $(".buttons > img").click(
+    PressedButtonEvent
+  );
+}
+
+main();
