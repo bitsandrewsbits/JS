@@ -10,7 +10,6 @@ function GetPressedButtonImageFile(){
     function(){
       img_file_match_result = img_file_re.exec($(this)[0].src);
       if (img_file_match_result){
-        // console.log('Pressed Button with Image File:' + img_file_match_result);
         return img_file_match_result;
       }
     }
@@ -118,16 +117,17 @@ function PlaySlideShowButtonPressed(buttonSelector){
       UpdateProgressBar();
     }, 1500); //set interval - 1.5s;
   }
-  else {
-    clearInterval(beginShow);
-    SetStartSliderImageBackground();
-    SetStartSlideShowParameters();
-    UpdateProgressBar();
-  }
 };
 
-//end-button;
-// $(".buttons").find(btnsForClick[4]).click(
+function StopSlideShowButton(intervalFunction, buttonSelector){
+  clearInterval(intervalFunction);
+  SetStartSliderImageBackground();
+  SetStartSlideShowParameters();
+  UpdateProgressBar();
+  buttonSelector[0].src = "img/play.png";
+  PlayButtonPressed = false;
+}
+
 function LastImageButtonPressed(){
   ProgressBarPercentagesAmount = 100;
   ImagesCounter = ImagesAmount;
@@ -136,8 +136,6 @@ function LastImageButtonPressed(){
   UpdateProgressBar(ProgressBarPercentagesAmount);
 };
 
-//first-image-button;
-// $(".buttons").find(btnsForClick[0]).click(
 function FirstImageButtonPressed(){
   ProgressBarPercentagesAmount = ProgressBarPercentagePerImage;
   ImagesCounter = 1;
@@ -145,6 +143,22 @@ function FirstImageButtonPressed(){
   $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
   UpdateProgressBar(ProgressBarPercentagesAmount);
 };
+
+function ChangeButtonImageWhenClicked(pressedButtonSelector){
+  pressedButtonSelector.css("width", "40px");
+  pressedButtonSelector.css("height", "40px");
+  pressedButtonSelector.css("margin-left", "10px");
+  pressedButtonSelector.css("margin-right", "5px");
+  pressedButtonSelector.css("margin-bottom", "5px");
+}
+
+function ReturnToDefaultButtonImageAfterClick(pressedButtonSelector){
+  pressedButtonSelector.css("width", "50px");
+  pressedButtonSelector.css("height", "50px");
+  pressedButtonSelector.css("margin-left", "5px");
+  pressedButtonSelector.css("margin-right", "0px");
+  pressedButtonSelector.css("margin-bottom", "0px");
+}
 
 function GetButtonsImagesFunctionsDict(buttonsImages, buttonsFunctions){
   result_dict = {};
@@ -154,17 +168,28 @@ function GetButtonsImagesFunctionsDict(buttonsImages, buttonsFunctions){
   return result_dict;
 }
 
-let ButtonsImages = ['img/start', "img/backward", "img/play", "img/next", "img/end"];
+let ButtonsImages = ['img/start', "img/backward", "img/play", "img/stop", "img/next", "img/end"];
 let ButtonsFunctions = [
   FirstImageButtonPressed, BackwardButtonPressed, PlaySlideShowButtonPressed,
-  ForwardButtonPressed, LastImageButtonPressed
+  StopSlideShowButton, ForwardButtonPressed, LastImageButtonPressed
 ];
 
-function PressedButtonEvent(){
+function sleep(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function PressedButtonEvent(){
   img_file_match_result = img_file_re.exec($(this)[0].src);
   if (img_file_match_result){
-    if (img_file_match_result == 'img/play' || img_file_match_result == 'img/stop'){
+    ChangeButtonImageWhenClicked($(this));
+    await sleep(100);
+    ReturnToDefaultButtonImageAfterClick($(this));
+
+    if (img_file_match_result == 'img/play'){
       ButtonsImagesFunctionsDict[img_file_match_result]($(this));
+    }
+    else if (img_file_match_result == 'img/stop'){
+      ButtonsImagesFunctionsDict[img_file_match_result](beginShow, $(this));
     }
     else {
       ButtonsImagesFunctionsDict[img_file_match_result]();
