@@ -1,5 +1,5 @@
 body {
-  background-image: url("img/slider_page_image_background.png");
+  background-image: url("img/slider_page_image_background.jpg");
   background-size: 100%;
 }
 
@@ -86,13 +86,30 @@ body {
 .buttons {
   position: relative;
   top: 70px;
-  margin: auto;
-  width: 35%;
-  height: 50px;
+  left: 25%;
+  width: 50%;
+  height: 40%;
 }
 
 .btnsSlider {
-  width: 50px;
-  height: 50px;
-  margin-left: 5px;
+  display: inline-block;
+  width: 80px;
+  height: 29px;
+  padding-top: 11px;
+  margin-left: 7px;
+  text-align: center;
+  font-family: sans-serif;
+  background-color: rgb(120, 190, 18);
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.btnsSlider:hover {
+  background-color: rgb(90, 90, 90);
+  color: rgb(230, 240, 90);
+}
+
+.btnsSlider:active {
+  background-color: rgb(0, 0, 0);
+  color: rgb(250, 190, 90);
 }

@@ -174,17 +174,9 @@ let ButtonsFunctions = [
   StopSlideShowButton, ForwardButtonPressed, LastImageButtonPressed
 ];
 
-function sleep(ms){
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function PressedButtonEvent(){
+function PressedButtonEvent(){
   img_file_match_result = img_file_re.exec($(this)[0].src);
   if (img_file_match_result){
-    ChangeButtonImageWhenClicked($(this));
-    await sleep(100);
-    ReturnToDefaultButtonImageAfterClick($(this));
-
     if (img_file_match_result == 'img/play'){
       ButtonsImagesFunctionsDict[img_file_match_result]($(this));
     }
