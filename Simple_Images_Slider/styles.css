@@ -19,44 +19,11 @@ body {
   background-size: 100%;
 }
 
-.ImagesLoader {
-  position: absolute;
-  top: 25%;
-  left: 30%;
-  width: 40%;
-  height: 50%;
-  border: 1px solid black;
-  background-color: rgb(140, 140, 189);
-}
-
-.ImagesLoaderButton {
-  position: absolute;
-  top: 40%;
-  left: 9%;
-  width: 82%;
-  font-size: 20px;
-  font-family: sans-serif;
-  color: black;
-}
-
-.ImagesLoaderButton:hover {
-  background-color: rgb(40, 40, 40);
-  color: rgb(250, 180, 120);
-}
-
-.ImagesLoaderButton:active {
-  background-color: black;
-  color: rgb(250, 180, 120);
-  border: 2px solid orange;
-  border-radius: 5px;
-}
-
 .CurrentSlideShowImage {
   position: absolute;
-  top: 5%;
-  left: 2.5%;
-  width: 0%; /*when slide-show: 95*/
-  height: 0%; /*when slide-show: 90*/ 
+  width: 0%;
+  height: 0%;
+  background-size: 100%;
 }
 
 .menuSlider {

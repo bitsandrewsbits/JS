@@ -1,21 +1,7 @@
 let arrayImages = [
-  "img/cat_1.jpg", "img/cat_2.jpg", "img/cat_3.jpeg",
-  "img/cat_4.jpeg", "img/cat_5.jpg", "img/cat_6.jpg",
-  "img/cat_7.jpg", "img/cat_8.jpg"
+  'slide-show_images/forest_1.jpeg', 'slide-show_images/forest_2.jpg', 'slide-show_images/forest_3.jpg',
+  'slide-show_images/forest_4.jpg', 'slide-show_images/forest_5.jpg', 'slide-show_images/forest_6.jpeg'
 ];
-const img_file_re = new RegExp("img\/[a-zA-Z0-9]*");
-
-function GetPressedButtonImageFile(){
-  $(".buttons > img").click(
-    function(){
-      img_file_match_result = img_file_re.exec($(this)[0].src);
-      if (img_file_match_result){
-        return img_file_match_result;
-      }
-    }
-  )
-}
-
 let CurrentImageIndex = 0;
 let ImagesAmount = arrayImages.length;
 let ProgressBarPercentagePerImage = 100 / ImagesAmount;
@@ -29,6 +15,8 @@ function UpdateProgressBar(percentages){
 }
 
 function SetStartSliderImageBackground(){
+  $(".show > div").css("width", "100%");
+  $(".show > div").css("height", "100%");
   $(".show > div").css("background-image", "none");
 }
 
@@ -50,7 +38,7 @@ function UpdateParametersToPreviousImage(){
   ProgressBarPercentagesAmount = ImagesCounter * ProgressBarPercentagePerImage;
 }
 
-function BackwardButtonPressed(){
+function PreviousButtonPressed(){
   if (CurrentImageIndex > 0){
     UpdateParametersToPreviousImage();
   }
@@ -65,7 +53,7 @@ function BackwardButtonPressed(){
   }
 };
 
-function ForwardButtonPressed(){
+function NextButtonPressed(){
   if (CurrentImageIndex < arrayImages.length){
     UpdateParametersToNextImage();
   }
@@ -83,21 +71,32 @@ function ForwardButtonPressed(){
   UpdateProgressBar(ProgressBarPercentagesAmount);
 };
 
+function SetDefaultPlayButtonStyles(selector){
+  selector.css("background-color", "rgb(120, 190, 18)");
+  selector.css("color", "rgb(0, 0, 0)");
+  selector.css("border", "1px solid black");
+}
+
 let PlayButtonPressed = false;
 let beginShow = 0;
 
 function PlaySlideShowButtonPressed(buttonSelector){
-  console.log("Play button:" + buttonSelector[0].src);
+  // console.log("Play button:" + buttonSelector[0].innerHTML);
+  $(".show > div").css("width", "100%");
+  $(".show > div").css("height", "100%");
   if (PlayButtonPressed){
-    buttonSelector[0].src = "img/play.png";
+    buttonSelector[0].innerHTML = "Play";
     PlayButtonPressed = false;
   }
   else {
-    buttonSelector[0].src = "img/stop.png";
+    buttonSelector[0].innerHTML = "Stop";
     PlayButtonPressed = true;
   }
 
   if (PlayButtonPressed){
+    buttonSelector.css("background-color", "rgb(0, 0, 0)");
+    buttonSelector.css("color", "rgb(230, 240, 90)");
+    buttonSelector.css("border", "1px solid rgb(120, 190, 18)");
     beginShow = setInterval(function(){
       if (CurrentImageIndex < ImagesAmount){
         $(".show > div").css("background-image", "url(" + arrayImages[CurrentImageIndex] + ")");
@@ -109,8 +108,9 @@ function PlaySlideShowButtonPressed(buttonSelector){
       else {
         clearInterval(beginShow);
         $(".show > div").css("background-image", "url(" + arrayImages[0] + ")");
-        buttonSelector[0].src = "img/play.png";
+        buttonSelector[0].innerHTML = "Play";
         PlayButtonPressed = false;
+        SetDefaultPlayButtonStyles(buttonSelector);
         SetStartSliderImageBackground();
         SetStartSlideShowParameters();
       }
@@ -124,7 +124,8 @@ function StopSlideShowButton(intervalFunction, buttonSelector){
   SetStartSliderImageBackground();
   SetStartSlideShowParameters();
   UpdateProgressBar();
-  buttonSelector[0].src = "img/play.png";
+  SetDefaultPlayButtonStyles(buttonSelector);
+  buttonSelector[0].innerHTML = "Play";
   PlayButtonPressed = false;
 }
 
@@ -144,54 +145,39 @@ function FirstImageButtonPressed(){
   UpdateProgressBar(ProgressBarPercentagesAmount);
 };
 
-function ChangeButtonImageWhenClicked(pressedButtonSelector){
-  pressedButtonSelector.css("width", "40px");
-  pressedButtonSelector.css("height", "40px");
-  pressedButtonSelector.css("margin-left", "10px");
-  pressedButtonSelector.css("margin-right", "5px");
-  pressedButtonSelector.css("margin-bottom", "5px");
-}
-
-function ReturnToDefaultButtonImageAfterClick(pressedButtonSelector){
-  pressedButtonSelector.css("width", "50px");
-  pressedButtonSelector.css("height", "50px");
-  pressedButtonSelector.css("margin-left", "5px");
-  pressedButtonSelector.css("margin-right", "0px");
-  pressedButtonSelector.css("margin-bottom", "0px");
-}
-
-function GetButtonsImagesFunctionsDict(buttonsImages, buttonsFunctions){
+function GetButtonsNamesFunctionsDict(buttonsNames, buttonsFunctions){
   result_dict = {};
-  for (let i = 0; i < buttonsImages.length; i++){
-    result_dict[buttonsImages[i]] = buttonsFunctions[i];
+  for (let i = 0; i < buttonsNames.length; i++){
+    result_dict[buttonsNames[i]] = buttonsFunctions[i];
   }
   return result_dict;
 }
 
-let ButtonsImages = ['img/start', "img/backward", "img/play", "img/stop", "img/next", "img/end"];
+let ButtonsNames = ['First', "Previous", "Play", "Stop", "Next", "Last"];
 let ButtonsFunctions = [
-  FirstImageButtonPressed, BackwardButtonPressed, PlaySlideShowButtonPressed,
-  StopSlideShowButton, ForwardButtonPressed, LastImageButtonPressed
+  FirstImageButtonPressed, PreviousButtonPressed, PlaySlideShowButtonPressed,
+  StopSlideShowButton, NextButtonPressed, LastImageButtonPressed
 ];
 
 function PressedButtonEvent(){
-  img_file_match_result = img_file_re.exec($(this)[0].src);
-  if (img_file_match_result){
-    if (img_file_match_result == 'img/play'){
-      ButtonsImagesFunctionsDict[img_file_match_result]($(this));
+  PressedButtonName = $(this)[0].innerHTML;
+  // console.log('Pressed Button: ' + PressedButtonName);
+  if (PressedButtonName){
+    if (PressedButtonName == 'Play'){
+      ButtonsNamesFunctionsDict[PressedButtonName]($(this));
     }
-    else if (img_file_match_result == 'img/stop'){
-      ButtonsImagesFunctionsDict[img_file_match_result](beginShow, $(this));
+    else if (PressedButtonName == 'Stop'){
+      ButtonsNamesFunctionsDict[PressedButtonName](beginShow, $(this));
     }
     else {
-      ButtonsImagesFunctionsDict[img_file_match_result]();
+      ButtonsNamesFunctionsDict[PressedButtonName]();
     }
   }
 }
 
 function main(){
-  ButtonsImagesFunctionsDict = GetButtonsImagesFunctionsDict(ButtonsImages, ButtonsFunctions);
-  $(".buttons > img").click(
+  ButtonsNamesFunctionsDict = GetButtonsNamesFunctionsDict(ButtonsNames, ButtonsFunctions);
+  $(".buttons > .btnsSlider").click(
     PressedButtonEvent
   );
 }
